@@ -58,7 +58,7 @@ public class ProductManagerView implements RoleView {
         while(true) {
             System.out.println("Enter the row number to edit that item:");
             String indexString = input.nextLine();
-            int index = Integer.parseInt(indexString); //input.nextInt();
+            int index = Integer.parseInt(indexString);
             System.out.println(products.getItem(index));
             System.out.println("Do you want to edit this item?");
             String answer = input.nextLine();
@@ -100,7 +100,8 @@ public class ProductManagerView implements RoleView {
                 System.out.println("Enter the upc you want to search for:");
                 String upc = input.nextLine();
                 if (!upc.equals("")) {
-                    MyArrayList<Product> products = ProductDAO.searchProductsByUpc(upc);
+                    MyArrayList<Product> products = new MyArrayList<>();
+                    products.addItem(ProductDAO.searchProductsByUpc(upc));
                     this.products = products;
                 }
                 break;

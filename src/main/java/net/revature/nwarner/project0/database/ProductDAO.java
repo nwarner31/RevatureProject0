@@ -50,7 +50,7 @@ public class ProductDAO {
         }
     }
 
-    public static MyArrayList<Product> searchProductsByUpc(String upc) {
+    public static Product searchProductsByUpc(String upc) {
         try {
             Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM product WHERE upc = ?;");
@@ -58,7 +58,7 @@ public class ProductDAO {
             ps.setString(parameterIndex++, upc);
             ResultSet rs = ps.executeQuery();
             MyArrayList<Product> products = buildResultArray(rs);
-            return products;
+            return products.getItem(0);
         } catch (Exception e) {
 
         }

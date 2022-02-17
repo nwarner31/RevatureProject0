@@ -80,4 +80,9 @@ public class Location {
     public void setCurrentStock(int currentStock) {
         this.currentStock = currentStock;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s\t%s\t%s\t%s\t%s", area, aisle, section, capacity, currentStock);
+    }
 }
