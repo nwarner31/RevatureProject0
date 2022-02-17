@@ -12,17 +12,21 @@ import org.apache.logging.log4j.Level;
 
 public class Driver {
 
-    public static final Logger logger = LogManager.getLogger(Driver.class);
+
+
+    public static Logger logger;
 
     public static void main(String[] args) {
+        logger = LogManager.getLogger(Driver.class);
         Scanner input = new Scanner(System.in);
-        logger.debug("Hello This is a test.");
+        logger.info("Hello This is a test.");
         while(true) {
             System.out.println("Please enter the role code to activate");
             String role = input.nextLine();
             if(role.equals("quit")) break;
             RoleView rv = RoleViewFactory.getRoleView(role);
-            rv.run();
+            if(rv == null) System.out.println("Invalid choice");
+            else rv.run();
         }
     }
 }

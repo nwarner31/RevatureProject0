@@ -2,7 +2,6 @@
 /shelf/
 /workspace.xml
 
-../src/main/resources/log4j.properties
 
 # Compiled class file
 *.class

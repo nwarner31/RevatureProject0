@@ -8,6 +8,10 @@ public class RoleViewFactory {
                 return new ProductManagerView();
             case "lm":
                 return new LayoutManagerView();
+            case "stock":
+                return new StockerView();
+            case "floor":
+                return new FloorView();
             default:
                 return null;
         }
