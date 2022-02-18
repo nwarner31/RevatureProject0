@@ -1,6 +1,7 @@
-package net.revature.nwarner.project0.database.utility;
+package net.revature.nwarner.project0.database;
 
 import net.revature.nwarner.project0.collections.MyArrayList;
+import net.revature.nwarner.project0.database.utility.DBConnection;
 import net.revature.nwarner.project0.models.Location;
 
 import java.sql.Connection;
@@ -86,7 +87,6 @@ public class LocationDAO {
                 int capacity = rs.getInt("capacity");
                 int currentStock = rs.getInt("current_stock");
                 Location location = new Location(locationId, area, aisle, section, productId, capacity, currentStock);
-                System.out.println(location);
                 locations.addItem(location);
 
             }

@@ -2,10 +2,9 @@ package net.revature.nwarner.project0.views;
 
 import net.revature.nwarner.project0.collections.MyArrayList;
 import net.revature.nwarner.project0.database.ProductDAO;
-import net.revature.nwarner.project0.database.utility.LocationDAO;
+import net.revature.nwarner.project0.database.LocationDAO;
 import net.revature.nwarner.project0.models.Location;
 import net.revature.nwarner.project0.models.Product;
-import net.revature.nwarner.project0.models.Section;
 
 import java.util.Scanner;
 
