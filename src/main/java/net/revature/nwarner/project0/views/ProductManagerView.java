@@ -3,16 +3,13 @@ package net.revature.nwarner.project0.views;
 import net.revature.nwarner.project0.collections.MyArrayList;
 import net.revature.nwarner.project0.database.ProductDAO;
 import net.revature.nwarner.project0.models.Product;
-
-import java.util.Scanner;
-
+import net.revature.nwarner.project0.utility.InputGatherer;
 
 public class ProductManagerView implements RoleView {
 
     private MyArrayList<Product> products;
-    private final Scanner input;
+
     public ProductManagerView() {
-        input = new Scanner(System.in);
         products = new MyArrayList<>();
     }
 
@@ -21,8 +18,7 @@ public class ProductManagerView implements RoleView {
         System.out.println("Welcome Product Manager.");
 
         while(true) {
-            System.out.println("Would you like to create, edit, or search products?");
-            String action = input.nextLine();
+            String action = InputGatherer.getStringInput("Would you like to create, edit, or search products?");
             switch (action) {
                 case "create":
                     create();
@@ -35,94 +31,88 @@ public class ProductManagerView implements RoleView {
                     break;
                 case "logout":
                     return;
+                default:
+                    System.out.println("Not a valid input");
+                    break;
             }
         }
     }
 
     private void create() {
-        System.out.println("Please enter product UPC:");
-        String upc = input.nextLine();
-        System.out.println("Please enter the product name:");
-        String name = input.nextLine();
-        System.out.println("Please enter the product department number:");
-        String deptNumber = input.nextLine();
-        if (!upc.equals("") && !name.equals("") && !deptNumber.equals("")) {
-            Product p = new Product(upc, name, deptNumber);
-            ProductDAO.addProduct(p);
-        }
+        String upc = InputGatherer.getStringInput("Please enter product UPC:");
+        String name = InputGatherer.getStringInput("Please enter the product name:");
+        String deptNumber = InputGatherer.getStringInput("Please enter the product department number:");
 
+        Product p = new Product(upc, name, deptNumber);
+        if(!ProductDAO.addProduct(p)) System.out.println("Product not added");
     }
 
     private void edit() {
         searchProducts();
+        if(products.getSize()==0) {
+            return;
+        }
         while(true) {
-            System.out.println("Enter the row number to edit that item:");
-            String indexString = input.nextLine();
-            int index = Integer.parseInt(indexString);
+            int index = InputGatherer.getIntInput(products.getSize() - 1 ,"Enter the row number to edit that item:");
             System.out.println(products.getItem(index));
-            System.out.println("Do you want to edit this item?");
-            String answer = input.nextLine();
+            String answer = InputGatherer.getStringInput("Do you want to edit this item?");
 
-            System.out.println(String.format("Answer: %s", answer));
-            if(answer.equals("y") || answer.equals("yes")) {
+            if(InputGatherer.isYes(answer)) {
                 editProduct(products.getItem(index));
-
-                System.out.println("Do you want to edit another item in the list?");
-                String cont = input.nextLine();
-                if(cont.equals("n") || cont.equals("no")) return;
+                String editAnother = InputGatherer.getStringInput("Do you want to edit another item in the list?");
+                if(InputGatherer.isNo(editAnother)) return;
+            } else {
+                String selectAgain = InputGatherer.getStringInput("Do you want to select another item?");
+                if(InputGatherer.isNo(selectAgain)) return;
             }
 
         }
     }
 
     private void editProduct(Product p) {
-        System.out.println(String.format("Current UPC: %s", p.getUpc()));
-        String newUpc = input.nextLine();
-        if(!newUpc.equals("")) p.setUpc(newUpc);
+        String newUpc = InputGatherer.getStringInput(String.format("Current UPC: %s", p.getUpc()), p.getUpc());
+        p.setUpc(newUpc);
 
-        System.out.println(String.format("Current product name: %s", p.getProductName()));
-        String newName = input.nextLine();
-        if(!newName.equals("")) p.setProductName(newName);
+        String newName = InputGatherer.getStringInput(String.format("Current product name: %s", p.getProductName()), p.getProductName());
+        p.setProductName(newName);
 
-        System.out.println(String.format("Current department number: %s", p.getDepartmentNumber()));
-        String newDept = input.nextLine();
-        if(!newDept.equals("")) p.setDepartmentNumber(newDept);
+        String newDept = InputGatherer.getStringInput(String.format("Current department number: %s", p.getDepartmentNumber()), p.getDepartmentNumber());
+        p.setDepartmentNumber(newDept);
 
-        ProductDAO.updateProduct(p);
+        if(!ProductDAO.updateProduct(p)) System.out.println("Product not updated");
     }
 
     private void searchProducts() {
-        System.out.println("Do you want to search by upc, name, or department?");
-        String answer = input.nextLine();
-
-        switch (answer) {
-            case "upc":
-                System.out.println("Enter the upc you want to search for:");
-                String upc = input.nextLine();
-                if (!upc.equals("")) {
+        while (true) {
+            String answer = InputGatherer.getStringInput("Do you want to search by upc, name, or department?");
+            switch (answer) {
+                case "upc":
+                    String upc = InputGatherer.getStringInput("Enter the upc you want to search for:");
+                    Product product = ProductDAO.searchProductsByUpc(upc);
                     MyArrayList<Product> products = new MyArrayList<>();
-                    products.addItem(ProductDAO.searchProductsByUpc(upc));
+                    if(product != null) products.addItem(product);
+
                     this.products = products;
-                }
-                break;
-            case "name":
-                System.out.println("Enter the product name you want to search for:");
-                String productName = input.nextLine();
-                if(!productName.equals("")) {
-                    MyArrayList<Product> products = ProductDAO.searchProductsByName(productName);
+                    break;
+                case "name":
+                    String productName = InputGatherer.getStringInput("Enter the product name you want to search for:");
+                    products = ProductDAO.searchProductsByName(productName);
                     this.products = products;
-                }
-                break;
-            case "dept":
-                System.out.println("Enter the department number you want to search for:");
-                String deptNum = input.nextLine();
-                if(!deptNum.equals("")) {
-                    MyArrayList<Product> products = ProductDAO.searchProductsByDepartment(deptNum);
+                    break;
+                case "dept":
+                    String deptNum = InputGatherer.getStringInput("Enter the department number you want to search for:");
+                    products = ProductDAO.searchProductsByDepartment(deptNum);
                     this.products = products;
-                }
-                break;
+                    break;
+                default:
+                    System.out.println("Not a valid entry");
+                    continue;
+            }
+            break;
         }
-        view();
+        if (products.getSize() == 0) System.out.println("No products found");
+        else if (products.getSize() == 1) System.out.println(products.getItem(0));
+        else view();
     }
 
     private void view() {

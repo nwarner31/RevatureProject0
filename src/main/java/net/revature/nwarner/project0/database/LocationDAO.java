@@ -1,5 +1,6 @@
 package net.revature.nwarner.project0.database;
 
+import net.revature.nwarner.project0.Driver;
 import net.revature.nwarner.project0.collections.MyArrayList;
 import net.revature.nwarner.project0.database.utility.DBConnection;
 import net.revature.nwarner.project0.models.Location;
@@ -7,13 +8,14 @@ import net.revature.nwarner.project0.models.Location;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class LocationDAO {
 
     public static void addLocation(Location l) {
         try {
             Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO location (area, aisle, section_number, product_id, capacity, current_stock) VALUES (?, ?, ?, ?, ?, ?);");
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO location (area, aisle, section_number, product_id, capacity, current_stock) VALUES (?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
             int parameterIndex = 1;
             ps.setString(parameterIndex++, l.getArea());
             ps.setString(parameterIndex++, l.getAisle());
@@ -23,10 +25,14 @@ public class LocationDAO {
             ps.setInt(parameterIndex++, l.getCurrentStock());
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
-            int locationId = rs.getInt(1);
-            l.setId(locationId);
-        } catch(Exception e) {
+            if(rs.next()) {
+                int locationId = rs.getInt(1);
+                l.setId(locationId);
+                Driver.logger.info(String.format("Location [%s] added", locationId));
+            }
 
+        } catch(Exception e) {
+            Driver.logger.warn(e.getMessage());
         }
     }
 
@@ -40,8 +46,9 @@ public class LocationDAO {
             ps.setString(parameterIndex++, l.getSection());
             ps.setInt(parameterIndex++, l.getId());
             ps.executeUpdate();
+            Driver.logger.info(String.format("Location [%s] moved", l.getId()));
         } catch(Exception e) {
-
+            Driver.logger.warn(e.getMessage());
         }
     }
 
@@ -53,8 +60,9 @@ public class LocationDAO {
             ps.setInt(parameterIndex++, l.getCapacity());
             ps.setInt(parameterIndex++, l.getId());
             ps.executeUpdate();
+            Driver.logger.info(String.format("Location [%s] capactiy updated", l.getId()));
         } catch(Exception e) {
-
+            Driver.logger.warn(e.getMessage());
         }
     }
 
@@ -66,8 +74,9 @@ public class LocationDAO {
             ps.setInt(parameterIndex++, l.getCurrentStock());
             ps.setInt(parameterIndex++, l.getId());
             ps.executeUpdate();
+            Driver.logger.info(String.format("Location [%s] stock updated", l.getId()));
         } catch (Exception e) {
-
+            Driver.logger.warn(e.getMessage());
         }
     }
 
@@ -92,7 +101,7 @@ public class LocationDAO {
             }
             return locations;
         } catch(Exception e) {
-
+            Driver.logger.warn(e.getMessage());
         }
         return new MyArrayList<Location>();
     }

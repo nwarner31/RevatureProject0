@@ -83,6 +83,6 @@ public class Location {
 
     @Override
     public String toString() {
-        return String.format("%s\t%s\t%s\t%s\t%s", area, aisle, section, capacity, currentStock);
+        return String.format("%s %s-%s\tCap: %s\tCurrent: %s", area, aisle, section, capacity, currentStock);
     }
 }

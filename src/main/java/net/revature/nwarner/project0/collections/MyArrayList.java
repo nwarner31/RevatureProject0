@@ -1,8 +1,5 @@
 package net.revature.nwarner.project0.collections;
 
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-
 public class MyArrayList<T> {
     private T[] collection;
     private int size;

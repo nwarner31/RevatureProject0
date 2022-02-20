@@ -6,7 +6,7 @@ public class InputGatherer {
 
     private static final Scanner input = new Scanner(System.in);
 
-    public static String getStringInputNotEmpty(String prompt) {
+    public static String getStringInput(String prompt) {
         while(true) {
             System.out.println(prompt);
             String inputString = input.nextLine();
@@ -18,6 +18,16 @@ public class InputGatherer {
         }
     }
 
+    public static String getStringInput(String prompt, String defaultValue) {
+        System.out.println(prompt);
+        String inputString = input.nextLine();
+        if(inputString.isEmpty()) {
+            return defaultValue;
+        } else {
+            return inputString;
+        }
+    }
+
     public static int getIntInput(String prompt) {
         while (true) {
             System.out.println(prompt);
@@ -25,7 +35,11 @@ public class InputGatherer {
             if(!inputString.isEmpty()) {
                 try {
                     int intValue = Integer.parseInt(inputString);
-                    return intValue;
+                    if (intValue < 0) {
+                        System.out.println("Value must be 0 or larger");
+                    } else {
+                        return intValue;
+                    }
                 } catch(NumberFormatException nfe) {
                     System.out.println("Not a valid number");
                 }
@@ -35,6 +49,36 @@ public class InputGatherer {
         }
     }
 
+    public static int getIntInput(String prompt, int defaultValue) {
+        while(true) {
+            System.out.println(prompt);
+            String inputString = input.nextLine();
+            if(inputString.isEmpty()) return defaultValue;
+            else {
+                try{
+                    int intValue = Integer.parseInt(inputString);
+                    if (intValue < 0) {
+                        System.out.println("Value must be 0 or larger");
+                    } else {
+                        return intValue;
+                    }
+                }catch (NumberFormatException nfe) {
+                    System.out.println("Not a valid number");
+                }
+            }
+        }
+    }
+
+    public static int getIntInput(int maxValue, String prompt) {
+        while (true) {
+            int value = getIntInput(prompt);
+            if (value > maxValue) {
+                System.out.println("Value too large");
+            } else {
+                return value;
+            }
+        }
+    }
 
     public static boolean isYes(String inputString) {
         return inputString.equalsIgnoreCase("y") || inputString.equalsIgnoreCase("yes");

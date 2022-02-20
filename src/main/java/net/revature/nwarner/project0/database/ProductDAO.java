@@ -1,28 +1,30 @@
 package net.revature.nwarner.project0.database;
 
+import net.revature.nwarner.project0.Driver;
 import net.revature.nwarner.project0.collections.MyArrayList;
 import net.revature.nwarner.project0.database.utility.DBConnection;
 import net.revature.nwarner.project0.models.Product;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class ProductDAO {
 
     public static boolean addProduct(Product p) {
         try {
             Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO product (upc, product_name, department_number) VALUES (?, ?, ?);");
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO product (upc, product_name, department_number) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
             int parameterIndex = 1;
             ps.setString(parameterIndex++, p.getUpc());
             ps.setString(parameterIndex++, p.getProductName());
             ps.setString(parameterIndex++, p.getDepartmentNumber());
             int count = ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
-            int productId = rs.getInt(1);
-            p.setProductId(productId);
+            int productId;
+            if(rs.next()) {
+                productId = rs.getInt(1);
+                p.setProductId(productId);
+                Driver.logger.info(String.format("Product [%s] added", productId));
+            }
             if(count > 0) return true;
             else return false;
 
@@ -42,10 +44,12 @@ public class ProductDAO {
             ps.setString(parameterIndex++, p.getDepartmentNumber());
             ps.setInt(parameterIndex++, p.getProductId());
             int count = ps.executeUpdate();
-            if (count > 0) return true;
+            if (count > 0) {
+                Driver.logger.info(String.format("Product [%s] updated", p.getProductId()));
+                return true;
+            }
             else return false;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return false;
         }
     }
@@ -77,7 +81,7 @@ public class ProductDAO {
             return products;
 
         } catch (Exception e) {
-            return null;
+            return new MyArrayList<>();
         }
     }
 

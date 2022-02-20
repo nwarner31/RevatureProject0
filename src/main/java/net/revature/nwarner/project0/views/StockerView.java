@@ -7,22 +7,14 @@ import net.revature.nwarner.project0.models.Location;
 import net.revature.nwarner.project0.models.Product;
 import net.revature.nwarner.project0.utility.InputGatherer;
 
-import java.util.Scanner;
-
 public class StockerView implements RoleView{
-
-    private final Scanner input;
-
-    public StockerView() {
-        input = new Scanner(System.in);
-    }
 
     @Override
     public void run() {
 
         System.out.println("Welcome Stocker");
         while (true) {
-            String upc = InputGatherer.getStringInputNotEmpty("Enter the UPC to search for.");
+            String upc = InputGatherer.getStringInput("Enter the UPC to search for.");
             if (InputGatherer.isLogout(upc)) return;
 
             Product product = ProductDAO.searchProductsByUpc(upc);
@@ -32,9 +24,8 @@ public class StockerView implements RoleView{
             }
             System.out.println(product);
 
-            String toContinue = InputGatherer.getStringInputNotEmpty("Do you want to use this product?");
+            String toContinue = InputGatherer.getStringInput("Do you want to use this product?");
             if(InputGatherer.isNo(toContinue)) continue;
-
 
             MyArrayList<Location> locations = LocationDAO.getLocations(product.getProductId());
             if(locations.getSize() == 0) System.out.println("No product locations found");
@@ -43,12 +34,11 @@ public class StockerView implements RoleView{
                     System.out.println(String.format("[%s] %s", index, locations.getItem(index)));
                 }
 
-                int locationNumber = InputGatherer.getIntInput("Select a location");
+                int locationNumber = InputGatherer.getIntInput(locations.getSize() - 1, "Select a location");
                 System.out.println(locations.getItem(locationNumber));
-                int newStock = InputGatherer.getIntInput(String.format("Current stock: %s", locations.getItem(locationNumber).getCurrentStock()));
+                int newStock = InputGatherer.getIntInput(String.format("Current stock: %s\nEnter new stock amount:", locations.getItem(locationNumber).getCurrentStock()));
                 locations.getItem(locationNumber).setCurrentStock(newStock);
                 LocationDAO.updateCurrentStock(locations.getItem(locationNumber));
-
 
             }
         }
