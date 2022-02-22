@@ -9,6 +9,14 @@ import net.revature.nwarner.project0.utility.InputGatherer;
 
 public class StockerView implements RoleView{
 
+    LocationDAO locDAO;
+    ProductDAO prodDAO;
+
+    public StockerView() {
+        locDAO = new LocationDAO();
+        prodDAO = new ProductDAO();
+    }
+
     @Override
     public void run() {
 
@@ -17,7 +25,7 @@ public class StockerView implements RoleView{
             String upc = InputGatherer.getStringInput("Enter the UPC to search for.");
             if (InputGatherer.isLogout(upc)) return;
 
-            Product product = ProductDAO.searchProductsByUpc(upc);
+            Product product = prodDAO.searchProductsByUpc(upc);
             if(product == null) {
                 System.out.println("Product not found");
                 continue;
@@ -27,7 +35,7 @@ public class StockerView implements RoleView{
             String toContinue = InputGatherer.getStringInput("Do you want to use this product?");
             if(InputGatherer.isNo(toContinue)) continue;
 
-            MyArrayList<Location> locations = LocationDAO.getLocations(product.getProductId());
+            MyArrayList<Location> locations = locDAO.getLocations(product.getProductId());
             if(locations.getSize() == 0) System.out.println("No product locations found");
             else {
                 for(int index = 0; index < locations.getSize(); index++) {
@@ -38,7 +46,7 @@ public class StockerView implements RoleView{
                 System.out.println(locations.getItem(locationNumber));
                 int newStock = InputGatherer.getIntInput(String.format("Current stock: %s\nEnter new stock amount:", locations.getItem(locationNumber).getCurrentStock()));
                 locations.getItem(locationNumber).setCurrentStock(newStock);
-                LocationDAO.updateCurrentStock(locations.getItem(locationNumber));
+                locDAO.updateCurrentStock(locations.getItem(locationNumber));
 
             }
         }

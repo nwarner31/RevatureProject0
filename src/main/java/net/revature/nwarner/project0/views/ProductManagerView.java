@@ -8,9 +8,10 @@ import net.revature.nwarner.project0.utility.InputGatherer;
 public class ProductManagerView implements RoleView {
 
     private MyArrayList<Product> products;
-
+    private ProductDAO prodDAO;
     public ProductManagerView() {
         products = new MyArrayList<>();
+        prodDAO = new ProductDAO();
     }
 
     @Override
@@ -44,7 +45,7 @@ public class ProductManagerView implements RoleView {
         String deptNumber = InputGatherer.getStringInput("Please enter the product department number:");
 
         Product p = new Product(upc, name, deptNumber);
-        if(!ProductDAO.addProduct(p)) System.out.println("Product not added");
+        if(!prodDAO.addProduct(p)) System.out.println("Product not added");
     }
 
     private void edit() {
@@ -79,7 +80,7 @@ public class ProductManagerView implements RoleView {
         String newDept = InputGatherer.getStringInput(String.format("Current department number: %s", p.getDepartmentNumber()), p.getDepartmentNumber());
         p.setDepartmentNumber(newDept);
 
-        if(!ProductDAO.updateProduct(p)) System.out.println("Product not updated");
+        if(!prodDAO.updateProduct(p)) System.out.println("Product not updated");
     }
 
     private void searchProducts() {
@@ -88,7 +89,7 @@ public class ProductManagerView implements RoleView {
             switch (answer) {
                 case "upc":
                     String upc = InputGatherer.getStringInput("Enter the upc you want to search for:");
-                    Product product = ProductDAO.searchProductsByUpc(upc);
+                    Product product = prodDAO.searchProductsByUpc(upc);
                     MyArrayList<Product> products = new MyArrayList<>();
                     if(product != null) products.addItem(product);
 
@@ -96,12 +97,12 @@ public class ProductManagerView implements RoleView {
                     break;
                 case "name":
                     String productName = InputGatherer.getStringInput("Enter the product name you want to search for:");
-                    products = ProductDAO.searchProductsByName(productName);
+                    products = prodDAO.searchProductsByName(productName);
                     this.products = products;
                     break;
                 case "dept":
                     String deptNum = InputGatherer.getStringInput("Enter the department number you want to search for:");
-                    products = ProductDAO.searchProductsByDepartment(deptNum);
+                    products = prodDAO.searchProductsByDepartment(deptNum);
                     this.products = products;
                     break;
                 default:

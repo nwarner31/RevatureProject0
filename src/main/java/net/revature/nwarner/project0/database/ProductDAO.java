@@ -4,14 +4,25 @@ import net.revature.nwarner.project0.Driver;
 import net.revature.nwarner.project0.collections.MyArrayList;
 import net.revature.nwarner.project0.database.utility.DBConnection;
 import net.revature.nwarner.project0.models.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
 public class ProductDAO {
 
-    public static boolean addProduct(Product p) {
+    public static Logger logger= LogManager.getLogger(ProductDAO.class);;
+    Connection conn;
+    public ProductDAO() {
+        conn = DBConnection.getConnection();
+    }
+
+    public  ProductDAO(Connection conn) {
+        this.conn = conn;
+    }
+
+    public boolean addProduct(Product p) {
         try {
-            Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement("INSERT INTO product (upc, product_name, department_number) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
             int parameterIndex = 1;
             ps.setString(parameterIndex++, p.getUpc());
@@ -23,20 +34,20 @@ public class ProductDAO {
             if(rs.next()) {
                 productId = rs.getInt(1);
                 p.setProductId(productId);
-                Driver.logger.info(String.format("Product [%s] added", productId));
+                logger.info(String.format("Product [%s] added", productId));
             }
             if(count > 0) return true;
             else return false;
 
         }catch(Exception e) {
+            logger.warn(e.getMessage());
             return false;
         }
 
     }
 
-    public static Boolean updateProduct(Product p) {
+    public Boolean updateProduct(Product p) {
         try {
-            Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement("UPDATE product SET upc = ?, product_name = ?, department_number = ? WHERE product_id = ?;");
             int parameterIndex = 1;
             ps.setString(parameterIndex++, p.getUpc());
@@ -45,18 +56,18 @@ public class ProductDAO {
             ps.setInt(parameterIndex++, p.getProductId());
             int count = ps.executeUpdate();
             if (count > 0) {
-                Driver.logger.info(String.format("Product [%s] updated", p.getProductId()));
+                logger.info(String.format("Product [%s] updated", p.getProductId()));
                 return true;
             }
             else return false;
         } catch (Exception e) {
+            logger.warn(e.getMessage());
             return false;
         }
     }
 
-    public static Product searchProductsByUpc(String upc) {
+    public Product searchProductsByUpc(String upc) {
         try {
-            Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM product WHERE upc = ?;");
             int parameterIndex = 1;
             ps.setString(parameterIndex++, upc);
@@ -64,15 +75,14 @@ public class ProductDAO {
             MyArrayList<Product> products = buildResultArray(rs);
             return products.getItem(0);
         } catch (Exception e) {
-
+            logger.warn(e.getMessage());
         }
 
         return null;
     }
 
-    public static MyArrayList<Product> searchProductsByName(String name) {
+    public MyArrayList<Product> searchProductsByName(String name) {
         try {
-            Connection conn = DBConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM product WHERE product_name LIKE ?;");
             int parameterIndex = 1;
             ps.setString(parameterIndex++, String.format("%%%s%%",name));
@@ -81,14 +91,14 @@ public class ProductDAO {
             return products;
 
         } catch (Exception e) {
+            logger.warn(e.getMessage());
             return new MyArrayList<>();
         }
     }
 
-    public static MyArrayList<Product> searchProductsByDepartment(String department) {
+    public MyArrayList<Product> searchProductsByDepartment(String department) {
         try {
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM product WHERE department_number = ?");
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM product WHERE department_number = ?;");
             int parameterIndex = 1;
             ps.setString(parameterIndex++, department);
             ResultSet rs = ps.executeQuery();
@@ -96,12 +106,12 @@ public class ProductDAO {
             return products;
 
         } catch (Exception e) {
-
+            logger.warn(e.getMessage());
         }
         return null;
     }
 
-    private static MyArrayList<Product> buildResultArray(ResultSet rs) throws SQLException {
+    private MyArrayList<Product> buildResultArray(ResultSet rs) throws SQLException {
         MyArrayList<Product> products = new MyArrayList<>();
         while (rs.next()) {
             int productId = rs.getInt("product_id");

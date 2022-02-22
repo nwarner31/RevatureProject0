@@ -9,6 +9,14 @@ import net.revature.nwarner.project0.utility.InputGatherer;
 
 public class FloorView implements RoleView{
 
+    LocationDAO locDAO;
+    ProductDAO prodDAO;
+
+    public FloorView() {
+        locDAO = new LocationDAO();
+        prodDAO = new ProductDAO();
+    }
+
     @Override
     public void run() {
         System.out.println("Welcome Floor Employee");
@@ -33,7 +41,7 @@ public class FloorView implements RoleView{
 
     private void searchName() {
         String name = InputGatherer.getStringInput("Enter the name to search for: ");
-        MyArrayList<Product> products = ProductDAO.searchProductsByName(name);
+        MyArrayList<Product> products = prodDAO.searchProductsByName(name);
         if(products.getSize() == 0) {
             System.out.println("No products found");
             return;
@@ -42,7 +50,7 @@ public class FloorView implements RoleView{
             System.out.println(String.format("[%s] %s", index, products.getItem(index)));
         }
         int index = InputGatherer.getIntInput(products.getSize() - 1 ,"Select a product to view locations");
-        MyArrayList<Location> locations = LocationDAO.getLocations(products.getItem(index).getProductId());
+        MyArrayList<Location> locations = locDAO.getLocations(products.getItem(index).getProductId());
         if(locations.getSize() == 0) {
             System.out.println(products.getItem(index));
             System.out.println("This product has no current locations");
@@ -57,10 +65,10 @@ public class FloorView implements RoleView{
     private void searchUpc() {
         String upc = InputGatherer.getStringInput("Enter the UPC to search for:");
 
-        Product product = ProductDAO.searchProductsByUpc(upc);
+        Product product = prodDAO.searchProductsByUpc(upc);
         if(product != null) {
             System.out.println(product);
-            MyArrayList<Location> locations = LocationDAO.getLocations(product.getProductId());
+            MyArrayList<Location> locations = locDAO.getLocations(product.getProductId());
             if(locations.getSize() == 0) {
                 System.out.println("No product locations found");
             } else {

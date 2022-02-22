@@ -16,7 +16,7 @@ public class Driver {
     public static Logger logger;
 
     public static void main(String[] args) {
-        logger = LogManager.getLogger(Driver.class);
+
         //logger.info("Hello This is a test.");
         while(true) {
             String role = InputGatherer.getStringInput("Please enter the role code to activate");

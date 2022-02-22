@@ -1,5 +1,7 @@
 package net.revature.nwarner.project0.models;
 
+import java.util.Objects;
+
 public class Location {
 
     private int id;
@@ -84,5 +86,18 @@ public class Location {
     @Override
     public String toString() {
         return String.format("%s %s-%s\tCap: %s\tCurrent: %s", area, aisle, section, capacity, currentStock);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
+        return productId == location.productId && capacity == location.capacity && currentStock == location.currentStock && area.equals(location.area) && aisle.equals(location.aisle) && section.equals(location.section);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(area, aisle, section, productId, capacity, currentStock);
     }
 }

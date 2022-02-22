@@ -9,6 +9,12 @@ import net.revature.nwarner.project0.utility.InputGatherer;
 
 public class LayoutManagerView implements RoleView {
 
+    LocationDAO locDAO;
+    ProductDAO prodDAO;
+    public LayoutManagerView() {
+        locDAO = new LocationDAO();
+        prodDAO = new ProductDAO();
+    }
     @Override
     public void run() {
         System.out.println("Welcome Layout Manager.");
@@ -17,7 +23,7 @@ public class LayoutManagerView implements RoleView {
             String upc = InputGatherer.getStringInput("Enter the product UPC:");
 
             if(InputGatherer.isLogout(upc)) return;
-            Product product = ProductDAO.searchProductsByUpc(upc);
+            Product product = prodDAO.searchProductsByUpc(upc);
             if (product == null) {
                 System.out.println("No product found");
                 continue;
@@ -26,7 +32,7 @@ public class LayoutManagerView implements RoleView {
 
             String toContinue = InputGatherer.getStringInput("Do you want to work with this product?");
             if(InputGatherer.isNo(toContinue)) continue;
-            MyArrayList<Location> locations = LocationDAO.getLocations(product.getProductId());
+            MyArrayList<Location> locations = locDAO.getLocations(product.getProductId());
             if(locations.getSize() > 0) {
                 for (int index = 0; index < locations.getSize(); index++) {
                     System.out.println(String.format("[%s] %s", index, locations.getItem(index)));
@@ -71,7 +77,7 @@ public class LayoutManagerView implements RoleView {
         String section = InputGatherer.getStringInput("Enter the section:");
         int capacity = InputGatherer.getIntInput("Enter the shelf capacity");
         Location location = new Location(area, aisle, section, productId, capacity);
-        LocationDAO.addLocation(location);
+        locDAO.addLocation(location);
     }
 
     private void move(Location l) {
@@ -84,14 +90,14 @@ public class LayoutManagerView implements RoleView {
         String newSection = InputGatherer.getStringInput(String.format("Current section: %s", l.getSection()), l.getSection());
         l.setSection(newSection);
 
-        LocationDAO.updateProductLocation(l);
+        locDAO.updateProductLocation(l);
     }
 
     private void changeCapacity(Location l) {
         int newCapacity = InputGatherer.getIntInput(String.format("Current capacity: %s", l.getCapacity()), l.getCapacity());
         if(newCapacity != l.getCapacity()) {
             l.setCapacity(newCapacity);
-            LocationDAO.updateCapacity(l);
+            locDAO.updateCapacity(l);
         }
     }
 }
