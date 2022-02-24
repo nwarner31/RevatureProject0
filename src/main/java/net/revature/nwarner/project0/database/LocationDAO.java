@@ -1,6 +1,5 @@
 package net.revature.nwarner.project0.database;
 
-import net.revature.nwarner.project0.Driver;
 import net.revature.nwarner.project0.collections.MyArrayList;
 import net.revature.nwarner.project0.database.utility.DBConnection;
 import net.revature.nwarner.project0.models.Location;
@@ -14,13 +13,15 @@ import java.sql.Statement;
 
 public class LocationDAO {
 
-    public static Logger logger= LogManager.getLogger(LocationDAO.class);;
-    Connection conn;
+    private Logger logger;
+    private Connection conn;
     public LocationDAO() {
         conn = DBConnection.getConnection();
+        logger = LogManager.getLogger(LocationDAO.class);
     }
-    public LocationDAO(Connection conn) {
+    public LocationDAO(Connection conn, Logger logger) {
         this.conn = conn;
+        this.logger = logger;
     }
 
     public void addLocation(Location l) {

@@ -1,6 +1,5 @@
 package net.revature.nwarner.project0.database;
 
-import net.revature.nwarner.project0.Driver;
 import net.revature.nwarner.project0.collections.MyArrayList;
 import net.revature.nwarner.project0.database.utility.DBConnection;
 import net.revature.nwarner.project0.models.Product;
@@ -11,14 +10,16 @@ import java.sql.*;
 
 public class ProductDAO {
 
-    public static Logger logger= LogManager.getLogger(ProductDAO.class);;
+    private Logger logger;
     Connection conn;
     public ProductDAO() {
         conn = DBConnection.getConnection();
+        logger = LogManager.getLogger(ProductDAO.class);
     }
 
-    public  ProductDAO(Connection conn) {
+    public  ProductDAO(Connection conn, Logger logger) {
         this.conn = conn;
+        this.logger = logger;
     }
 
     public boolean addProduct(Product p) {

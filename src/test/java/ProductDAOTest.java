@@ -1,6 +1,7 @@
 
 import net.revature.nwarner.project0.database.ProductDAO;
 import net.revature.nwarner.project0.models.Product;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,11 +18,13 @@ public class ProductDAOTest {
     Connection mockConn;
     ResultSet mockResultSet;
     PreparedStatement mockPrepared;
+    Logger mockLogger;
 
     @BeforeAll
     public void setup() {
         mockConn = Mockito.mock(Connection.class);
-        testProductDAO = new ProductDAO(mockConn);
+        mockLogger = Mockito.mock(Logger.class);
+        testProductDAO = new ProductDAO(mockConn, mockLogger);
     }
 
     @Test

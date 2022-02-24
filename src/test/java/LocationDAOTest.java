@@ -1,6 +1,7 @@
 
 import net.revature.nwarner.project0.database.LocationDAO;
 import net.revature.nwarner.project0.models.Location;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,13 +20,15 @@ public class LocationDAOTest {
     Connection mockConn;
     ResultSet mockResultSet;
     PreparedStatement mockPrepared;
+    Logger mockLogger;
 
 
 
     @BeforeAll
     public void setup() {
         mockConn = Mockito.mock(Connection.class);
-        testLocationDAO = new LocationDAO(mockConn);
+        mockLogger = Mockito.mock(Logger.class);
+        testLocationDAO = new LocationDAO(mockConn, mockLogger);
 
     }
 
